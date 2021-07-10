@@ -1,0 +1,11 @@
+{
+  "deno": {
+    "enable": true,
+    "lint": true,
+    "unstable": true,
+    "suggest.imports.hosts": {
+      "https://dev.jspm.io": false
+    },
+    "importMap": "./import_map.json"
+  }
+}
