@@ -41,7 +41,10 @@ const html = `
 </html >`
 
 app.use(browserBundlePath, (req, res, next) => {
-  res.type('application/javascript').send(files['deno:///bundle.js'])
+  res
+    .type('application/javascript')
+    // FIXME: see https://github.com/denoland/deno/pull/10781
+    .send(files['deno:///bundle.js'])
 })
 
 app.use('/', (req, res, next) => {
