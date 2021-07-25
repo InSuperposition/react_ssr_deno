@@ -2,7 +2,7 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Deno - active file",
+      "name": "Deno server - active file",
       "type": "pwa-node",
       "request": "launch",
       "cwd": "${workspaceFolder}",
@@ -16,6 +16,48 @@
         "${file}"
       ],
       "attachSimplePort": 9229
+    },
+    {
+      "name": "Launch Chrome",
+      "request": "launch",
+      "type": "pwa-chrome",
+      "url": "http://localhost:3000",
+      "webRoot": "${workspaceFolder}",
+      "sourceMaps": true,
+      // "sourceMapPathOverrides": {
+      //   "webpack:///*": "${webRoot}/*"
+      // },
+      "smartStep": true
+    },
+    {
+      "name": "Launch Edge",
+      "type": "pwa-msedge",
+      "request": "launch",
+      "url": "http://localhost:3000",
+      "webRoot": "${workspaceFolder}",
+      "sourceMaps": true,
+      // "sourceMapPathOverrides": {
+      //   "webpack:///src/*": "${webRoot}/*"
+      // },
+      "smartStep": true
+    },
+    {
+      "name": "Launch Firefox",
+      "request": "launch",
+      "type": "firefox",
+      "url": "http://localhost:3000",
+      "webRoot": "${workspaceFolder}",
+      "profile": "dev-edition-default",
+      "keepProfileChanges": true,
+      "reAttach": true,
+      "reloadOnAttach": true,
+      "enableCRAWorkaround": true
+      // "pathMappings": [
+      //   {
+      //     "url": "http://localhost:3000/home/gallowayf/src/cp/src/",
+      //     "path": "${workspaceFolder}/src/"
+      //   }
+      // ]
     }
   ]
 }

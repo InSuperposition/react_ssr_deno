@@ -1,11 +1,7 @@
 {
-  "deno": {
-    "enable": true,
-    "lint": true,
-    "unstable": true,
-    "suggest.imports.hosts": {
-      "https://dev.jspm.io": false
-    },
-    "importMap": "./import_map.json"
-  }
+  "deno.config": "./tsconfig.json",
+  "deno.enable": true,
+  "deno.lint": true,
+  "deno.unstable": true,
+  "deno.importMap": "./import_map.json"
 }

@@ -1,6 +1,6 @@
 import React from 'react'
 
-const App = () => {
+export default function Landing(): JSX.Element {
   const [count, setCount] = React.useState(0)
 
   return (
@@ -11,5 +11,3 @@ const App = () => {
     </div>
   )
 }
-
-export default App

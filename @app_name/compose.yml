@@ -1,0 +1,11 @@
+version: '3.4'
+
+services:
+  ssr_app:
+    # environment:
+    #   - RUST_BACKTRACE=1
+    build:
+      context: ..
+      dockerfile: ./dockerfile
+    ports:
+      - 3000:3000
