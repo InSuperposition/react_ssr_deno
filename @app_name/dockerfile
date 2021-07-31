@@ -8,7 +8,7 @@ WORKDIR /app
 # Prefer not to run as root.
 USER deno
 
-COPY './import_map.json' .
+COPY '../import_map.json' .
 
 # These steps will be re-run upon each file change in your working directory:
 ADD . .

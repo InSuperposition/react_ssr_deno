@@ -11,7 +11,7 @@
 1. install `deno`
 
    ```sh
-   dvm install 1.12.1
+   dvm install 1.12.2
    ```
 
 ## Run on local machine
@@ -19,7 +19,7 @@
 1. in project root:
 
    ```sh
-   deno run --import-map=import_map.json -A --unstable mod.ts
+   deno run --import-map=import_map.json -A --unstable @app_name/mod.ts
    ```
 
 ## Run in container

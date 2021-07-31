@@ -1,4 +1,4 @@
-import createApp from '../app/mod.ts'
-import Landing from './routes/landing.tsx'
+import createApp from "../app/mod.ts";
+import Landing from "./routes/landing.tsx";
 
-const app = createApp({app: Landing, id: '@app_name'})
+createApp({ app: Landing, id: "@app_name" });

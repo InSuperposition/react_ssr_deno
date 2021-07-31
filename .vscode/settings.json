@@ -1,7 +1,10 @@
 {
-  "deno.config": "./tsconfig.json",
   "deno.enable": true,
   "deno.lint": true,
+  "deno.internalDebug": true,
   "deno.unstable": true,
-  "deno.importMap": "./import_map.json"
+  "deno.importMap": "./import_map.json",
+  "deno.suggest.imports.hosts": {
+    "https://deno.land": true
+  }
 }
