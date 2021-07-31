@@ -11,7 +11,7 @@
 1. install `deno`
 
    ```sh
-   dvm install 1.11.5
+   dvm install 1.12.1
    ```
 
 ## Run on local machine

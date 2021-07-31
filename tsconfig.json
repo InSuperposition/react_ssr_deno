@@ -1,6 +1,13 @@
 {
   "compilerOptions": {
-    "lib": ["dom", "dom.iterable", "es2021"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "dom.asynciterable",
+      "deno.ns",
+      "deno.unstable",
+      "es2021"
+    ],
     "target": "es2021",
     "sourceMap": true
   }
