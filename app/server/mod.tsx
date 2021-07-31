@@ -1,41 +1,45 @@
 import React, {ReactNode} from 'react'
 import ReactDOMServer from 'react-dom/server'
-import HtmlIndex from './html_index.tsx'
+import {Html} from '/component/mod.tsx'
 import {opine} from 'opine'
+import {appName, clientName} from '../constants.ts'
 
-const tsconfig = await Deno.readTextFile('../../tsconfig.json')
+const tsconfig = await Deno.readTextFile('../tsconfig.json')
 const config = JSON.parse(tsconfig)
 
 const compilerOptions = {
   ...config.compilerOptions,
   lib: [
-    ...config.compilerOptions.lib,
-    'dom.asynciterable',
-    'deno.ns',
-    'deno.unstable'
+    // ...config.compilerOptions.lib,
+    'dom',
+    'dom.iterable'
+    // 'es2021'
+    // 'dom.asynciterable',
+    // 'deno.ns',
+    // 'deno.unstable'
   ]
 }
 /**
  * Create our client bundle - you could split this out into
  * a preprocessing step.
  */
-const {diagnostics, files} = await Deno.emit('./client/mod.tsx', {
+const {diagnostics, files} = await Deno.emit('../app/client/mod.tsx', {
   bundle: 'module',
-  compilerOptions,
-  importMapPath: './import_map.json'
-  // compilerOptions: {
-  //   // TODO: https://deno.land/manual/typescript/configuration#targeting-deno-and-the-browser
-  //   lib: [
-  //     'dom',
-  //     'dom.iterable',
-  //     'dom.asynciterable',
-  //     'deno.ns',
-  //     'deno.unstable'
-  //   ],
-  //   target: 'es2020',
-  //   sourceMap: true
-  //   // inlineSourceMap: true
-  // },
+  // compilerOptions,
+  importMapPath: '../import_map.json',
+  compilerOptions: {
+    // TODO: https://deno.land/manual/typescript/configuration#targeting-deno-and-the-browser
+    lib: [
+      'dom',
+      'dom.iterable',
+      'dom.asynciterable',
+      'deno.ns',
+      'deno.unstable'
+    ],
+    target: 'es2020',
+    sourceMap: true
+    // inlineSourceMap: true
+  }
 })
 
 if (diagnostics) {
@@ -51,24 +55,28 @@ const srvr = opine()
 export interface ServerOpts {
   app: () => JSX.Element
   fileName?: string
-  id?: string
+  id: string
 }
 
 const defaultOptions: ServerOpts = {
   app: function DefaultApp() {
-    return <HtmlIndex>Default App</HtmlIndex>
+    return (
+      <Html fileName={clientName} id={appName}>
+        Default App
+      </Html>
+    )
   },
-  fileName: 'client',
-  id: 'root'
+  fileName: clientName,
+  id: appName
 }
 
 export default function server(options = defaultOptions) {
   const {fileName, id, app: App} = options
 
   const html = ReactDOMServer.renderToString(
-    <HtmlIndex fileName={fileName} id={id}>
+    <Html fileName={fileName} id={id}>
       <App />
-    </HtmlIndex>
+    </Html>
   )
 
   const bundlePath = `${fileName}.js`

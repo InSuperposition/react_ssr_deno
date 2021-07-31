@@ -1,18 +1,15 @@
 import React, {ReactNode} from 'react'
 
-type HtmlIndex = {children: ReactNode; fileName?: string; id?: string}
+type HtmlIndex = {children: ReactNode; fileName?: string; id: string}
 
 // const defaultProps = {
 
 // }
 
-export default function HtmlIndex({
-  children,
-  fileName = 'browser',
-  id = 'root'
-}: HtmlIndex) {
+export function Html({children, fileName, id}: HtmlIndex) {
   return (
     <>
+      {'<!doctype html>'}
       <html>
         <head>
           <script type="application/javascript" src={`${fileName}.js.map`} />
