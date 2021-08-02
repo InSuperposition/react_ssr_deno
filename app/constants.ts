@@ -1,2 +1,2 @@
-export const appName = "@default_app_name";
-export const clientName = "client";
+export const APP_NAME = "@default_app_name";
+export const CLIENT_NAME = "client";

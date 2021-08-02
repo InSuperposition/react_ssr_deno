@@ -1,7 +1,14 @@
-import {hydrate} from './client/mod.tsx'
-import server, {ServerOpts} from './server/mod.tsx'
+import createClient from "./client/mod.tsx";
+import createServer from "./server/mod.tsx";
 
-export default function runApp(options: ServerOpts) {
-  hydrate(options.app, options.id)
-  return server(options)
+export default async function createApp(
+  id: string,
+  app: () => JSX.Element,
+  ssr = false
+) {
+  console.info("");
+  const clientFiles = await createClient(id, path);
+  console.log("client output", clientFiles);
+
+  return createServer(/* client, */ { app, id, files });
 }

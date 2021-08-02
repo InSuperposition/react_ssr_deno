@@ -1,93 +1,70 @@
 import React from "react";
-import ReactDOMServer from "react-dom/server";
+import { renderToString } from "react-dom/server";
 import { Html } from "/component/mod.tsx";
 import { opine } from "opine";
-import { appName, clientName } from "../constants.ts";
+import { APP_NAME, CLIENT_NAME } from "../constants.ts";
+import { ServerOpts } from "../types.ts";
 
-const { diagnostics, files } = await Deno.emit("../app/client/mod.tsx", {
-  bundle: "module",
-  importMapPath: "../import_map.json",
-  compilerOptions: {
-    lib: ["dom", "dom.iterable", "es2021"],
-    target: "es2020",
-    sourceMap: true,
-  },
-});
-
-if (diagnostics) {
-  console.log("diagnostics", diagnostics);
-}
-
-if (files) {
-  console.log("files", files);
-}
+console.info("deno cwd", Deno.cwd());
 
 const srvr = opine();
 
-export interface ServerOpts {
-  app: () => JSX.Element;
-  fileName?: string;
-  id: string;
+function AppDefault() {
+  return (
+    <Html fileName={CLIENT_NAME} id={APP_NAME}>
+      Default App
+    </Html>
+  );
 }
 
-const defaultOptions: ServerOpts = {
-  app: function DefaultApp() {
-    return (
-      <Html fileName={clientName} id={appName}>
-        Default App
-      </Html>
-    );
-  },
-  fileName: clientName,
-  id: appName,
-};
-
-export default function server(options = defaultOptions) {
-  const { fileName, id, app: App } = options;
-
-  const html = ReactDOMServer.renderToString(
-    <Html fileName={fileName} id={id}>
+export default function createServer(
+  id = APP_NAME,
+  { app: App = AppDefault, name = CLIENT_NAME, files = {} }: ServerOpts
+) {
+  const html = renderToString(
+    <Html fileName={name} id={id}>
       <App />
     </Html>
   );
 
-  const bundlePath = `${fileName}.js`;
-  const bundleMapPath = `${fileName}.js.map`;
+  const clientPath = `${name}.js`;
+  const clientSourceMapPath = `${clientPath}.map`;
 
   // FIXME:
-  const sourceMap = JSON.parse(files["deno:///bundle.js.map"]);
-  const sources = sourceMap.sources.map((val: string) => {
-    const end = val.length - 1;
-    return val.substring(1, end);
-  });
-  const patchedSourceMap = {
-    ...sourceMap,
-    sources,
-  };
-  console.log("patched source map", patchedSourceMap.sources);
+  // const sourceMap = JSON.parse(files["deno:///bundle.js.map"]);
+  // const sources = sourceMap.sources.map((val: string) => {
+  //   const end = val.length - 1;
+  //   return val.substring(1, end);
+  // });
+  // const patchedSourceMap = {
+  //   ...sourceMap,
+  //   sources,
+  // };
+  // console.log("patched source map", patchedSourceMap.sources);
 
-  srvr.use(bundlePath, (req, res, next) => {
+  srvr.use(clientPath, (_req, res) => {
     res
-      .set("sourcemap", bundleMapPath)
-      // .type('application/javascript')
+      .set("sourcemap", clientSourceMapPath)
+      .type("application/javascript")
       // FIXME: see https://github.com/denoland/deno/pull/10781
-      .send(files["deno:///bundle.js"]);
+      .send(client);
   });
 
-  srvr.use(bundleMapPath, (req, res, next) => {
-    res
-      .type("application/json")
-      // FIXME: see https://github.com/denoland/deno/pull/10781
-      .json(patchedSourceMap);
-  });
+  // srvr.use(clientSourceMapPath, (req, res, next) => {
+  //   res
+  //     .type("application/json")
+  //     // FIXME: see https://github.com/denoland/deno/pull/10781
+  //     .json(patchedSourceMap);
+  // });
 
-  srvr.use("/", (req, res, next) => {
+  srvr.use("/", (_req, res) => {
     res.type("text/html").send(html);
   });
 
   const port = 3000;
 
-  srvr.listen({ port });
+  const app = srvr.listen({ port });
+  console.info(`React SSR App listening on port ${port}`, app);
 
-  console.log(`React SSR App listening on port ${port}`);
+  return app;
 }
