@@ -21,11 +21,13 @@ export default function createServer(
   id = APP_NAME,
   { app: App = AppDefault, name = CLIENT_NAME, files = {} }: ServerOpts
 ) {
-  const html = renderToString(
-    <Html fileName={name} id={id}>
-      <App />
-    </Html>
-  );
+  const html = `
+    <!doctype html>
+    ${renderToString(
+      <Html fileName={name} id={id}>
+        <App />
+      </Html>
+    )}`;
 
   const clientPath = `${name}.js`;
   const clientSourceMapPath = `${clientPath}.map`;
