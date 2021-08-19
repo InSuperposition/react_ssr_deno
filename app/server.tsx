@@ -1,51 +1,35 @@
 import React from 'react'
-import ReactDOM from 'react-dom'
-
 import {renderToString} from 'react-dom/server'
 import {Html} from '/component/mod.tsx'
 import {opine} from 'opine'
-import {APP_NAME, CLIENT_NAME} from './constants.ts'
-
-console.info('deno cwd', Deno.cwd())
+import {createClient} from './client.tsx'
+import {APP_NAME} from './constants.ts'
 
 const server = opine()
-
-export function hydrate(App: () => JSX.Element, id: string) {
-  return ReactDOM.hydrate(<App />, document.getElementById(id))
+const defaultOptions = {
+  ssr: true
 }
-
-function AppDefault() {
-  return (
-    <Html fileName={CLIENT_NAME} id={APP_NAME}>
-      Default App
-    </Html>
-  )
-}
-
 export async function createApp(
-  App: () => JSX.Element,
+  path: string,
   id = APP_NAME,
-  name = CLIENT_NAME
+  options = defaultOptions
 ) {
-  // const App = await import(url)
-  const {diagnostics, files} = await Deno.emit('./client.tsx', {
-    bundle: 'module',
-    importMapPath: '../import_map.json',
-    compilerOptions: {
-      lib: ['dom', 'es2020'],
-      target: 'es5',
-      sourceMap: true
-    }
+  const {name, code, map} = await createClient(path, id)
+  const clientSourceMapFileName = `${name}.map`
+
+  // FIXME:
+  const sourceMap = JSON.parse(map)
+  const sources = sourceMap.sources.map((val: string) => {
+    const end = val.length - 1
+    return val.substring(1, end)
   })
-
-  if (diagnostics) {
-    console.log('diagnostics', Deno.formatDiagnostics(diagnostics))
+  const patchedSourceMap = {
+    ...sourceMap,
+    sources
   }
+  console.log('patched source map', patchedSourceMap.sources)
 
-  if (files) {
-    console.log('files', files)
-  }
-
+  const {default: App} = await import(`${Deno.cwd()}/${path}`)
   const html = `
     <!doctype html>
     ${renderToString(
@@ -53,34 +37,18 @@ export async function createApp(
         <App />
       </Html>
     )}`
+  server.use(`/${clientSourceMapFileName}`, (req, res, next) => {
+    res
+      .type('application/json')
+      // FIXME: see https://github.com/denoland/deno/pull/10781
+      .json(patchedSourceMap)
+  })
 
-  const clientFileName = `${name}.js`
-  const clientSourceMapFileName = `${clientFileName}.map`
-
-  // FIXME:
-  // const sourceMap = JSON.parse(files['deno:///bundle.js.map'])
-  // const sources = sourceMap.sources.map((val: string) => {
-  //   const end = val.length - 1
-  //   return val.substring(1, end)
-  // })
-  // const patchedSourceMap = {
-  //   ...sourceMap,
-  //   sources
-  // }
-  // console.log('patched source map', patchedSourceMap.sources)
-
-  // server.use(`/${clientSourceMapFileName}`, (req, res, next) => {
-  //   res
-  //     .type('application/json')
-  //     // FIXME: see https://github.com/denoland/deno/pull/10781
-  //     .json(patchedSourceMap)
-  // })
-
-  server.use(`/${clientFileName}`, (_req, res) => {
+  server.use(`/${name}`, (_req, res) => {
     res
       .set('sourcemap', clientSourceMapFileName)
       .type('application/javascript')
-      .send(files['deno:///bundle.js'])
+      .send(code)
   })
 
   server.use('/', (_req, res) => {

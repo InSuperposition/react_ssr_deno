@@ -1,4 +1,5 @@
 import {createApp} from '../app/server.tsx'
-import {AppName} from './app.tsx'
 
-const app = createApp(AppName)
+const appPath = 'app.tsx'
+
+const server = await createApp(appPath)

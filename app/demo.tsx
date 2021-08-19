@@ -1,6 +1,6 @@
 import React from 'react'
 
-export default function AppName(): JSX.Element {
+export function AppName(): JSX.Element {
   const [count, setCount] = React.useState(0)
 
   return (
