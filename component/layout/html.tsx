@@ -1,8 +1,8 @@
 import React, { ReactNode } from "react";
 
-type HtmlIndex = { children: ReactNode; fileName?: string; id: string };
+export declare interface HtmlIndex { children: ReactNode; fileName?: string; id?: string };
 
-export function Html({ children, fileName, id }: HtmlIndex) {
+export function Html({ children, fileName, id = "app_root"}: HtmlIndex) {
   return (
     <html>
       <head>
