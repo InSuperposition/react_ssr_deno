@@ -46,8 +46,6 @@ export async function createApp(
     console.log('files', files)
   }
 
-  console.log('APP', App)
-
   const html = `
     <!doctype html>
     ${renderToString(
