@@ -1,4 +1,4 @@
-import React from 'react';
+import React from 'react'
 
 export function AppName(): JSX.Element {
   const [count, setCount] = React.useState(0)
@@ -11,6 +11,3 @@ export function AppName(): JSX.Element {
     </div>
   )
 }
-
-
-
